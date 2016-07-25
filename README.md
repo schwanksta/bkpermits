@@ -20,5 +20,4 @@ $ node-lambda run
 And deploy with 
 
 ```bash
-$ node-lambda deploy -t 60 -o arn:aws:iam::YOUR_IAM_ID:role/YOUR_IAM_ROLE
-```
+$ node-lambda deploy -t 60 -o arn:aws:iam::IAM_ID:role/IAM_ROLE -f deploy.env -r us-east-1```
