@@ -49,14 +49,8 @@ exports.handler = (event, context, callback) => {
             var newIds = ids.slice(0, idxLast);
             console.log("New filings: ", newIds.length);
 
-            if(idxLast == 0) {
-                callback(null, "Nothing to do");
-                context.succeed()
-                process.exit(0)
-            }
-
             response.body.results.forEach((val, index, array) => {
-                if(ids.indexOf(val.filing_id) >=0 && val.amount >= 4000) {
+                if(newIds.indexOf(val.filing_id) >=0 && val.amount >= 4000) {
                     emoj(val.purpose).then(arr => arr.slice(0, 3).join('  ')).then(emojis => {
                         var nice_date = dateformat(Date(val.date), "m/d/yy");
                         var status = title(val.fec_committee_name) + " ► " + title(val.payee) + ", $" + journalize.intcomma(val.amount) + "\n\n" + emojis + "  " + val.purpose.toLowerCase();
@@ -68,12 +62,13 @@ exports.handler = (event, context, callback) => {
                     })
                 }
             });
-            console.log(ids.toString());
-            s3bucket.upload({ Key: "fecvenmo-lastid", Body: ids[0].toString() }, (err, data) => {
-                if (err) console.log("Error uploading data: ", err);
-                else console.log("Successfully uploaded data to " + process.env.S3_BUCKET + "/fecvenmo-lastid");
-            });
 
+            if(newIds.length > 0) {
+                s3bucket.upload({ Key: "fecvenmo-lastid", Body: ids[0].toString() }, (err, data) => {
+                    if (err) console.log("Error uploading data: ", err);
+                    else console.log("Successfully uploaded data to " + process.env.S3_BUCKET + "/fecvenmo-lastid");
+                });
+            }
         });
     })
 };
