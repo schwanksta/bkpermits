@@ -27,7 +27,6 @@ var T = new twit({
 })
 
 exports.handler = (event, context, callback) => {
-    console.log("Starting");
     got( "https://api.propublica.org/campaign-finance/v1/2016/independent_expenditures.json", options)
     .then(response => {
         s3bucket.getObject({  Bucket: process.env.S3_BUCKET, Key: "fecvenmo-lastid" }, (err, data) => {
@@ -40,7 +39,7 @@ exports.handler = (event, context, callback) => {
             var ids = _.uniq(_.pluck(response.body.results, "filing_id").sort().reverse(), true)
             var idxLast = ids.indexOf(lastid);
 
-            console.log("last fec id: ", lastid);
+            console.log("Last fec id: ", lastid);
             if(idxLast == -1) {
                 // We need to walk back more in the feed, butttttt
                 idxLast = ids.length;
