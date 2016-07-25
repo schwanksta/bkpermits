@@ -1,0 +1,21 @@
+{
+  "name": "fecvenmo",
+  "version": "1.0.0",
+  "description": "Like Venmo, but for FEC data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ken Schwencke @schwanksta",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.4.9",
+    "dateformat": "^1.0.12",
+    "emoj": "^0.3.0",
+    "got": "^6.3.0",
+    "journalize": "^1.2.0",
+    "to-title-case": "^1.0.0",
+    "twit": "^2.2.4",
+    "underscore": "^1.8.3"
+  }
+}
