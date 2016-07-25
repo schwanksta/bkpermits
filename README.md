@@ -5,8 +5,20 @@ Runs on the AWS Lambda infrastructure. It is kinda cool.
 To get this working, you need an AWS account, a Twitter account, and a ProPublica Campaign Finance API key.
 
 ```bash
-cp deploy.env.template deploy.env
-cp deploy.env .env
+$ cp deploy.env.template deploy.env
+$ cp deploy.env .env
 ```
 
-And fill out both of those envs with your keys.
+And fill out both of those envs with your keys. 
+
+This is designed to work with `node-lambda`, so kick the tires with:
+
+```bash
+$ node-lambda run
+```
+
+And deploy with 
+
+```bash
+$ node-lambda deploy -t 60 -o arn:aws:iam::YOUR_IAM_ID:role/YOUR_IAM_ROLE
+```
