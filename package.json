@@ -1,7 +1,7 @@
 {
-  "name": "plgpermits",
+  "name": "bkpermits",
   "version": "1.0.0",
-  "description": "PLG Permits",
+  "description": "Brooklyn Permits",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
