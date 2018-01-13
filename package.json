@@ -1,7 +1,7 @@
 {
-  "name": "fecvenmo",
+  "name": "plgpermits",
   "version": "1.0.0",
-  "description": "Like Venmo, but for FEC data",
+  "description": "PLG Permits",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +11,6 @@
   "dependencies": {
     "aws-sdk": "^2.4.9",
     "dateformat": "^1.0.12",
-    "emoj": "^0.3.0",
     "got": "^6.3.0",
     "journalize": "^1.2.0",
     "to-title-case": "^1.0.0",
