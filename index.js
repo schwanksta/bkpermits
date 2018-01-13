@@ -30,12 +30,12 @@ var T = new twit({
 // "NB" or "DM" permits and aren't renewals of old permits.
 // It still pulls in new permits for old jobs (eg a new permit for an existing demolition job)
 // but I'll figure that out.
-var permits_url = "https://data.cityofnewyork.us/resource/ipu4-2q9a.json?NTA_NAME=Prospect%20Lefferts%20Gardens-Wingate&$where=(permit_type%20=%20%27DM%27%20OR%20permit_type%20=%20%27NB%27)%20AND%20issuance_date%20IS%20NOT%20NULL%20AND%20filing_status%20!=%20%27RENEWAL%27&$order=issuance_date%20desc&$limit=25"
+var permits_url = "https://data.cityofnewyork.us/resource/ipu4-2q9a.json?BOROUGH=BROOKLYN&$where=(permit_type%20=%20%27DM%27%20OR%20permit_type%20=%20%27NB%27)%20AND%20issuance_date%20IS%20NOT%20NULL%20AND%20filing_status%20!=%20%27RENEWAL%27&$order=issuance_date%20desc&$limit=25"
 
 exports.handler = (event, context, callback) => {
     got( permits_url, options)
     .then(response => {
-        s3bucket.getObject({  Bucket: process.env.S3_BUCKET, Key: "plgpermits-lastid" }, (err, data) => {
+        s3bucket.getObject({  Bucket: process.env.S3_BUCKET, Key: "bkpermits-lastid" }, (err, data) => {
             if (err) {
               console.log("Could not get S3 object ", err);
               console.log("setting to 0")
@@ -59,7 +59,7 @@ exports.handler = (event, context, callback) => {
             response.body.forEach((val, index, array) => {
                 if(newIds.indexOf(val.permit_si_no) >=0 ) {
                     if(val.permit_type == "DM") {
-                        var status = "New demolition permit issued for " + val.house__ + " " + title(val.street_name) + ", " + val.zip_code
+                        var status = "Demolition permit issued for " + val.house__ + " " + title(val.street_name) + ", " + val.zip_code
                     } else if(val.permit_type == "NB") {
                         var status = "New building permit issued for " + val.house__ + " " + title(val.street_name) + ", " + val.zip_code
                     }
@@ -74,9 +74,9 @@ exports.handler = (event, context, callback) => {
 
             if(newIds.length > 0) {
                 // This adds the most recent ID we've seen to a key on s3 that we can pull to figure out what's new.
-                s3bucket.upload({ Key: "plgpermits-lastid", Body: ids[0].toString() }, (err, data) => {
+                s3bucket.upload({ Key: "bkpermits-lastid", Body: ids[0].toString() }, (err, data) => {
                     if (err) console.log("Error uploading data: ", err);
-                    else console.log("Successfully uploaded data to " + process.env.S3_BUCKET + "/plgpermits-lastid");
+                    else console.log("Successfully uploaded data to " + process.env.S3_BUCKET + "/bkpermits-lastid");
                 });
             }
         });
