@@ -1,8 +1,8 @@
-A Twitter bot that ingests the ProPublica campfin API and merges it with the Dango emoji API to produce a wonderful, Venmo-like Twitter feed of payment information.
+A Twitter bot that runs through the latest permits approved in a neighborhood, and tweets out any new "new building" or "demolition" permits.
 
 Runs on the AWS Lambda infrastructure. It is kinda cool.
 
-To get this working, you need an AWS account, a Twitter account, and a ProPublica Campaign Finance API key.
+To get this working, you need an AWS account and a Twitter account
 
 ```bash
 $ cp deploy.env.template deploy.env

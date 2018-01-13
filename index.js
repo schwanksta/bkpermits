@@ -1,14 +1,13 @@
 var got = require('got'),
-	emoj = require('emoj'),
 	twit = require('twit'),
 	title = require('to-title-case'),
 	journalize = require('journalize'),
-    dateformat = require('dateformat'),
     aws = require('aws-sdk'),
     _ = require('underscore');
 
 aws.config.region = 'us-east-1';
 
+// An AWS bucket where we will stash a key that tells us the last permit ID we saw
 var s3bucket = new aws.S3({params: { Bucket: process.env.S3_BUCKET }});
 
 var options = {
@@ -24,6 +23,13 @@ var T = new twit({
 })
 
 
+// You can replace this with any valid URL that pulls JSON from the
+// NYC Open Data's DOB Permit Issuance data set: 
+// https://data.cityofnewyork.us/Housing-Development/DOB-Permit-Issuance/ipu4-2q9a/data
+// The current one pulls the last 25  Prospect Lefferts Gardens-Wingate permits that are
+// "NB" or "DM" permits and aren't renewals of old permits.
+// It still pulls in new permits for old jobs (eg a new permit for an existing demolition job)
+// but I'll figure that out.
 var permits_url = "https://data.cityofnewyork.us/resource/ipu4-2q9a.json?NTA_NAME=Prospect%20Lefferts%20Gardens-Wingate&$where=(permit_type%20=%20%27DM%27%20OR%20permit_type%20=%20%27NB%27)%20AND%20issuance_date%20IS%20NOT%20NULL%20AND%20filing_status%20!=%20%27RENEWAL%27&$order=issuance_date%20desc&$limit=25"
 
 exports.handler = (event, context, callback) => {
@@ -37,12 +43,13 @@ exports.handler = (event, context, callback) => {
             } else {
               var lastid = data.Body.toString('utf-8');
             }
+            // extract the IDs
             var ids = _.uniq(_.pluck(response.body, "permit_si_no"), true)
             var idxLast = ids.indexOf(lastid);
             console.log(idxLast)
             console.log("Last permit number: ", lastid);
             if(idxLast == -1) {
-                // We should walk back more in the feed, butttttt
+                // We should walk back more in the feed, butttttt I'm lazy and whatever.
                 idxLast = ids.length;
             }
 
@@ -66,6 +73,7 @@ exports.handler = (event, context, callback) => {
             });
 
             if(newIds.length > 0) {
+                // This adds the most recent ID we've seen to a key on s3 that we can pull to figure out what's new.
                 s3bucket.upload({ Key: "plgpermits-lastid", Body: ids[0].toString() }, (err, data) => {
                     if (err) console.log("Error uploading data: ", err);
                     else console.log("Successfully uploaded data to " + process.env.S3_BUCKET + "/plgpermits-lastid");
